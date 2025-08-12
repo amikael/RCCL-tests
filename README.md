@@ -22,8 +22,10 @@ module load partition/C
 module load cray-python
 module use /appl/local/csc/modulefiles/
 module load pytorch
-``
+```
+
 Whatever you do, you need a version of Python and PyTorch installed.  Then, you need to be on a computing node.
+
 ```
 srun --account=project_462000964 --partition=dev-g --ntasks=1 --gres=gpu:mi250:1 --time=00:10:00 --pty bash
 echo $SLURM_JOB_PARTITION
@@ -47,21 +49,17 @@ rccl_test:     ❌ No ROCm GPU detected by PyTorch.
 rccl_test: 🚀 RCCL + OFI Communication Test (LUMI version)
 rccl_test: ------------------------------------------------------------
 rccl_test:     ✅ ROCm GPU successfully detected by PyTorch.
-
 rccl_test: 🔍 Container binding check:
 rccl_test:     📦 Detected a _singularity_ container environment.
 rccl_test:     ✅ ROCm bindings (/dev/{kfd,dri} and /opt/rocm) appear to be available.
-rccl_test:     🔢 ROCm detected: AMD clang version 18.0.0git (https://github.com/RadeonOpenCompute/llvm-project roc-6.2.0 24292 26466ce804ac523b398608f17388eb6d605a3f09)
-
+rccl_test:     🔢 ROCm detected: AMD clang version 18.0.0git (...)
 rccl_test: 🔍 Verifying loaded RCCL plugin via environment:
 rccl_test:     PLUGIN_DIR = /project/project_462000964/members/aylijyra/rccl-lib3.10
-rccl_test:     LD_LIBRARY_PATH = /usr/local/lib:/opt/rocm/lib/:/usr/local/lib/python3.11/dist-packages/faiss:/opt/cray/libfabric/1.15.2.0/lib64:/.singularity.d/libs
+rccl_test:     LD_LIBRARY_PATH = /usr/local/lib:/opt/rocm/lib/:...
 rccl_test:     ❌ RCCL OFI plugin not found in LD_LIBRARY_PATH.
-
 rccl_test: 🔍 Kernel parameter check:
 rccl_test:     ⚠️ Kernel boot params might be missing or alternate: amd_iommu=on
 rccl_test:        although related params are present: iommu=pt
-
 rccl_test: 🔍 DMA Buffering Capacity Check:
 rccl_test:     ✅ ROCm version rocm-core6.2.0-6.2.0.60200-sles155.66.x86_64
 rocm-core-6.2.0.60200-sles155.66.x86_64 > 6.0, as required by DMABUF
