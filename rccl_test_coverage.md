@@ -17,6 +17,14 @@ The table shows that many things are not being checked by the current tool.  Thi
 | RCCL plugin file present      | Checks `librccl-net-ofi.so` exists and can be loaded                   |             ✅             |       📄 Yes       | Symbol presence checked in logs                    |
 | All-reduce result             | Validates basic collective communication (RCCL works)                  |             ✅             |       📄 Yes       | Correct (42.0) result of the rccl_test.pu confirms it                            |
 
+#### Summary of the Perceived Recommendations:
+- Test ROCm only on computing nodes (you need `srun`)
+- Use CSC/LUST provided containers only to maximize the consistency of COMMs/ROCm plugins
+- "ROCm will be updated to version 6.3. ROCm 6.0 is not not be supported anymore."  
+- Running singularity containers is not an issue.  DMA Buffering just not work for now.
+- RCCL plugin file should be present in the containers.  Do not use EasyBuilds.
+- Validate RCCL by running rccl_test.py
+
 ### RCCL AWS-CXI plugin: Libfabric
 "Comms are important! RCCL AWS-CXI plugin enables collectives computation on devices (3-4x faster collectives). Minimizes the role of the CPU in the control path – expose more asynchronous computation opportunities. Lowest latency for network message passing is from GPU HBM memory. Requires: **HPE Cray Libfabric** implementation from (https://github.com/ROCm/aws-ofi-rccl).  Included in the LUMI provided containers! If not using the LUMI containers make sure you have that in your environment with these settings."
 See (https://462000265.lumidata.eu/ai-20250204/files/LUMI-ai-20250204-09-Extreme_scale_AI.pdf)
