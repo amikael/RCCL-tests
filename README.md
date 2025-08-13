@@ -30,6 +30,7 @@ The directory contains the following tools and the respective documentation:
 - `rccl_test.py` - the most comprehensive test
 - `test_fine_grain2.py` - testing fine grained memory (not very useful), see `test_fine_grain.md`
 - `torch_env_check2.py` - testing torch (a simpler variant of `rccl_test.py`)
+- `envcheck.sh` - a stupid way to check comms relevant environment variables
 
 ## Licence
 Most of the tests are simple enough to be written in 5 minutes or a day.  I have used ChatGPT to help me writing some of the test code.  Thus, the tentative licence for this software is Creative Commons.  You are free to use the code as you wish, but I would be vary happy to get improved versions of the tools back.
