@@ -37,6 +37,16 @@ Related settings:  `CXI_FORK_SAFE_HP=1` and `FI_CXI_DISABLE_CQ_HUGETLB=1` are fi
 | `FI_CXI_DISABLE_CQ_HUGETLB=1´ | Slingshot to avoid fork/hugepage issues with PyTorch dataloaders/containers | | | Commonly recommended |
 | `FI_HMEM=rocr`                   | Enables Libfabric's HMEM for GPU memory communication.                   |             ✅             |       📄 Yes       | Also tested via `fi_info` if available. Note that `FI_HMEM=1` is not correct for LUMI. The value must be `rocr/cuda/ze`.             |
 
+#### Summary of the Perceived Recommendations: 
+```
+LD_LIBRARY_PATH=<set path>   # To find dynamic `.so` files like libfabric.so
+RCCL_ENABLE_OFI=1            # Enables RCCL OFI (libfabric) plugin for inter-node GPU comm 
+FI_PROVIDER=cxi              # Selects libfabric CXI (Slingshot) provider
+CXI_FORK_SAFE_HP=1           # Slingshot, to avoid fork/hugepage issues with PyTorch
+FI_CXI_DISABLE_CQ_HUGETLB=1  # Slingshot, to avoid fork/hugepage issues with PyTorch
+FI_HMEM=rocr                 # Enables Libfabric's HMEM for GPU memory communication
+```
+
 ### Node-Local Caches
 "Just-in-time compiles are a common technique in AI applications. MIOpen leverages this functionality.  MIOpen is a library for high-optimized machine learning primitives. Used on many models – not in our LLM example though. It uses caches to enable just-in-time compilation organized as SQLite databases.  File system doesn’t deal well with SQLite locks when many processes are trying to access it.
 Solution? Setup individual caches for groups of ranks – we recommend per node.  Let’s cache those builds in node-local storage instead of the default home folder." 
@@ -47,6 +57,14 @@ See (https://462000265.lumidata.eu/ai-20250204/files/LUMI-ai-20250204-09-Extreme
 | `MIOPEN_CUSTOM_CACHE_DIR=\$MIOPEN_USER_DB_PATH`                    | Use to cache just-in-time MPI compiles |  |  |  |
 | `MIOPEN_ENABLE_LOGGING=0`     | Turn this 1 to chack MPI activity  |  |  |  |                    
 | `RCCL_MSCCL_ENABLE=1`         | Enables MSCCL plugin (multi-source collectives)                        |             ❌             |       📄 Yes       | RCCL logs confirm MSCCL activation                 |
+
+#### Summary of the Perceived Recommendations: 
+```
+MIOPEN_USER_DB_PATH="/tmp/$(whoami)-miopen-cache-\$SLURM_NODEID"
+MIOPEN_CUSTOM_CACHE_DIR=\$MIOPEN_USER_DB_PATH  # Use a node-local storage to cache just-in-time MPI compiles
+MIOPEN_ENABLE_LOGGING=0                        # Turn this 1 to chack MPI activity
+RCCL_MSCCL_ENABLE=1                            # Enables MSCCL plugin (multi-source collectives)
+```
 
 ### Point RCCL to use the high-speed network interfaces
 "RCCL should be set to use only high-speed-interfaces - Slingshot.  Point RCCL to use all 4 high-speed interfaces by setting `NCCL_SOCKET_IFNAME=hsn0,hsn1,hsn2,hsn3` or (`NCCL_SOCKET_IFNAME=hsn`). It will know how to bind them based on the node topology."
@@ -63,6 +81,13 @@ See (https://462000265.lumidata.eu/ai-20250204/files/LUMI-ai-20250204-09-Extreme
 | Kernel Param: `amd_iommu=on`  | Enables AMD IOMMU (required for RDMA and GPU memory mapping)           |         ✅ Inferred        |     📄 Partial     | `iommu=pt` seen instead; acceptable on LUMI        |
 | Kernel Param: `iommu=pt`      | Pass-through IOMMU mode (enables devices but no memory remapping)      |         ✅ Inferred        |       📄 Yes       | Warning issued if `amd_iommu=on` missing           |
 
+#### Summary of the Perceived Recommendations: 
+```
+NCCL_SOCKET_IFNAME=hsn0,hsn1,hsn2,hns3 # Tells NCCL/RCCL to use Slingshot High Speed Network interfaces
+NCCL_NET_GDR_LEVEL=PHB                 # Enables GPU Direct RDMA when GPU and NIC share PCIe Host Bridge
+```
+
+
 ### Not Usable: DMA Buffering Plugin
 Given your earlier segfault with NCCL_DMABUF_ENABLE=1, I’d keep DMABUF off (don’t set NCCL_DMABUF_ENABLE) until you align versions (aws-ofi-rccl vs RCCL vs libfabric). Recent notes highlight API/version mismatches; the plugin commonly targets ncclNet v5. (ChatGPT5, olcf.ornl.gov)
 | Variable / Setting            | Purpose / Effect                                                       | Tested by `rccl_test2.py` | Validated via Logs | Notes / Observability                              |
@@ -73,7 +98,7 @@ Given your earlier segfault with NCCL_DMABUF_ENABLE=1, I’d keep DMABUF off (do
 `HSA_FORCE_FINE_GRAIN_PCIE=1` is only needed if your code/tests allocate fine-grained PCIe memory (some rccl-tests do). Otherwise you can leave it, or unset if you want the default behavior.   
 | Variable / Setting            | Purpose / Effect                                                       | Tested by `rccl_test2.py` | Validated via Logs | Notes / Observability                              |
 | ----------------------------- | ---------------------------------------------------------------------- | :-----------------------: | :----------------: | -------------------------------------------------- |
-| `HSA_FORCE_FINE_GRAIN_PCIE=1` | Enables fine-grained PCIe memory — ROCm zero-copy memory behavior      |         ✅ Partial         |          ❌         | Indirectly inferred from tensor success            |
+| `HSA_FORCE_FINE_GRAIN_PCIE=0` | Enables fine-grained PCIe memory — ROCm zero-copy memory behavior      |         ✅ Partial         |          ❌         | Indirectly inferred from tensor success            |
 
 ### Debug agents: 
 If you have `HSA_ENABLE_DEBUG=1`, that enables the ROC debug agent hooks and can add overhead; unset it unless you’re actively debugging:
