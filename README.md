@@ -16,6 +16,11 @@ The software has been authored using ChatGPT to help with details.  You may use 
 3. The current tests have been developed to help the users to gain better understanding of what is going on.  They try to show the current settings and/or test the ROCm initialisation given the current environment.
 4. However, even tests need testing.  There is a possibility of false positives and false negatives.  For example, rccl_test.pu itself sets some environment variables.  It happened that some of these changes shadowed the current environment.   Furthermore, since pytorch module in LUMI has been implemented as a container that starts when a python command is given, you need to understand that the environment changes slightly when the python starts.  Note also that when the pytorch module is loaded, the environment changes drastically:  there are changes that anticipate the python command and the singularity startup, and the module sets MOST of the ROCm/NCCL/Libfabric related settings at this point to enable a decent environment of pytorch.
 
+## Motivation
+[Mengshiou Wu, Mark Stock 2024: Enhancing PyTorch Performance on Frontier with the RCCL OFI-Plugin](https://www.olcf.ornl.gov/wp-content/uploads/OLCF_AI_Training_0417_2024.pdf) 
+
+
+
 ## The Use Cases 
 Thus, there was a use case for the tool `rccl_test.py` and many simpler tools included into this repository.  For example, these were used
 1. to check that the CSC provided modules are used correctly and the result is expectable
