@@ -5,6 +5,8 @@ A better name for this software would have been `comms_tests` since it is all ab
 
 ## DISCLAIMER
 
+This software is not meant to be shared or published as a part of my work.  I made this originally for myself and I do not expect that this software is useful for anybody else.  However, at some point I thought that it may be useful to keep track of these explorations.  Putting the software to GitHub is one of best ways to store and develop the software for an extended period of time without forgetting it to somewhere in my directories.
+
 The software has been authored using ChatGPT to help with details.  You may use this software only at your risk.  The repository is for running tests as an ordinary user.  The risks of damage should be limited to the user's files and processes.  It is solely based on python and bash scripts and the availability of some python libraries, such as pytorch.  The tests are rather straightforward and easy to review for possible vulnerabilities.  
 
 ## The Philosophy behind the Tools
