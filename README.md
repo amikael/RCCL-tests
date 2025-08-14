@@ -49,6 +49,8 @@ Most of the tests are simple enough to be written in 5 minutes or a day.  I have
 ## Information about standard test methods that may be more appropriate for you
 I try to list here some useful commands that are not part of this software but that you can use to do similar things.  For an experienced user, some of these commands can be much more useful, but for random user, it may take time to gather the information from the small pieces.  Some of these tests may also be handy in sh scripts (in fact used also in `rccl_test.py` and even in sbatch scripts.  
 
+- To see wheter you are on a GPU node, you can query: `echo $SLURM_JOB_PARTITION`.  This is empty if you are on a login node.
+
 - A "Smoke" test to confirm GPUs are available ([LUMI AI course material](https://462000265.lumidata.eu/ai-20250204/files/LUMI-ai-20250204-09-Extreme_scale_AI.pdf)):
   ```
   if [ \$SLURM_LOCALID -eq 0 ] ; then rocm-smi; fi
